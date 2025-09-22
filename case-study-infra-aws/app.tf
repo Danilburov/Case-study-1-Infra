@@ -1,16 +1,12 @@
-// -----------------------------
 // App VPC (will host ALB + private EC2 instances)
-// -----------------------------
 resource "aws_vpc" "app" {
   cidr_block           = var.app_vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags = { Name = "app-vpc" }
+  tags                 = { Name = "app-vpc" }
 }
 
-// -----------------------------
 // Derive subnet CIDRs (locals)
-// -----------------------------
 // Create 4 subnets from the /16
 // First two = PUBLIC, next two = PRIVATE
 locals {
@@ -19,40 +15,32 @@ locals {
   app_private_subnets = slice(local.app_subnets, 2, 4)
 }
 
-// -----------------------------
 // Internet Gateway (for public subnets)
-// -----------------------------
 resource "aws_internet_gateway" "app" {
   vpc_id = aws_vpc.app.id
   tags   = { Name = "app-igw" }
 }
 
-// -----------------------------
 // Public subnets (2 AZs)
-// -----------------------------
 resource "aws_subnet" "app_public" {
   count                   = 2
   vpc_id                  = aws_vpc.app.id
   availability_zone       = var.azs[count.index]
   cidr_block              = local.app_public_subnets[count.index]
   map_public_ip_on_launch = true
-  tags = { Name = "app-public-${count.index}" }
+  tags                    = { Name = "app-public-${count.index}" }
 }
 
-// -----------------------------
 // Private subnets (2 AZs)
-// -----------------------------
 resource "aws_subnet" "app_private" {
   count             = 2
   vpc_id            = aws_vpc.app.id
   availability_zone = var.azs[count.index]
   cidr_block        = local.app_private_subnets[count.index]
-  tags = { Name = "app-private-${count.index}" }
+  tags              = { Name = "app-private-${count.index}" }
 }
 
-// -----------------------------
 // NAT Gateway (for private egress)
-// -----------------------------
 // Needs an Elastic IP in one public subnet
 resource "aws_eip" "app_nat" {
   domain = "vpc"
@@ -65,9 +53,7 @@ resource "aws_nat_gateway" "app" {
   tags          = { Name = "app-nat" }
 }
 
-// -----------------------------
-// Public route table
-// -----------------------------
+//Public route table
 resource "aws_route_table" "app_public" {
   vpc_id = aws_vpc.app.id
   tags   = { Name = "app-public-rt" }
@@ -85,9 +71,7 @@ resource "aws_route_table_association" "app_public_assoc" {
   route_table_id = aws_route_table.app_public.id
 }
 
-// -----------------------------
 // Private route table
-// -----------------------------
 resource "aws_route_table" "app_private" {
   vpc_id = aws_vpc.app.id
   tags   = { Name = "app-private-rt" }

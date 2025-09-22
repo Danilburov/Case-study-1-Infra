@@ -21,3 +21,28 @@ variable "data_vpc_cidr" {
   type    = string
   default = "10.2.0.0/16"
 }
+//Credentials / sizes
+variable "key_pair_name" { type = string } # must exist in region
+variable "app_instance_type" {
+  type    = string
+  default = "t3.micro"
+}
+
+//THESE MUST NOT BE LIKE THAT!
+variable "db_username" {
+  type    = string
+  default = "postgresadmin"
+}
+variable "db_password" {
+  type    = string
+  default = "password"
+}
+variable "rds_instance_class" {
+  type    = string
+  default = "db.t4g.micro"
+}
+//For admin access to ALB/Grafana/SSH; tighten to your IP
+variable "your_ip_cidr" {
+  type    = string
+  default = "0.0.0.0/0"
+}
