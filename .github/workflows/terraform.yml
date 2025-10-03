@@ -1,10 +1,10 @@
-name: Terraform CI/CD
+name: Terraform on push
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
     branches: [ main ]
+    paths:
+      - 'case-study-infra-aws/**'
 
 permissions:
   contents: read
@@ -17,10 +17,7 @@ jobs:
       AWS_REGION: eu-central-1
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # Remove the next line if you are NOT using temporary STS creds
-      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-    #default working dir for all `run:` steps
     defaults:
       run:
         working-directory: case-study-infra-aws
@@ -29,15 +26,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show files (debug)
-        run: |
-          pwd
-          ls -la
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
+
+      - name: Who am I in AWS? (sanity)
+        run: aws sts get-caller-identity
 
       - name: Terraform Init
         run: terraform init -input=false
@@ -48,10 +43,5 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        if: github.event_name == 'pull_request'
-        run: terraform plan -input=false -no-color
-
-      - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -input=false
+      - name: Terraform Plan (logs only)
+        run: terraform plan -input=fa
