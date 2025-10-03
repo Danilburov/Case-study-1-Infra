@@ -1,12 +1,3 @@
-data "aws_ami" "ubuntu" {
-  owners      = ["099720109477"]
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
-  }
-}
-
 resource "aws_instance" "app" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.app_instance_type
@@ -63,3 +54,4 @@ resource "aws_lb_listener" "http" {
 }
 
 output "alb_dns_name" { value = aws_lb.app.dns_name }
+output "app_ec2_private_ip" { value = aws_instance.app.private_ip }

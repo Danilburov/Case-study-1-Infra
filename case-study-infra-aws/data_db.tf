@@ -14,7 +14,7 @@ resource "aws_db_instance" "postgres" {
   allocated_storage      = 20
   db_subnet_group_name   = aws_db_subnet_group.data.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  publicly_accessible    = false
+  publicly_accessible    = true
   multi_az               = false
   skip_final_snapshot    = true
   apply_immediately      = true

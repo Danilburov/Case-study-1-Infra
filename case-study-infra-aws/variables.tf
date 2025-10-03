@@ -46,3 +46,12 @@ variable "your_ip_cidr" {
   type    = string
   default = "0.0.0.0/0"
 }
+//shared aws_ami for both app_compute and monitoring
+data "aws_ami" "ubuntu" {
+  owners      = ["099720109477"]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+}
