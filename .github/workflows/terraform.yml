@@ -9,37 +9,35 @@ on:
 permissions:
   contents: read
 
-env:
-  AWS_REGION: eu-central-1
-
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: eu-central-1
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # Remove the next line if you are NOT using temporary STS creds
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+
+    #default working dir for all `run:` steps
+    defaults:
+      run:
+        working-directory: case-study-infra-aws
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Show files (debug)
+        run: |
+          pwd
+          ls -la
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.5
-
-      # Call the secrets from the env vars (Need to change every hour)
-      - name: Configure AWS env
-        run: |
-          echo "Configuring AWS env"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-
-      - name: Debug AWS creds
-        run: |
-          echo "AWS_ACCESS_KEY_ID is set: ${#AWS_ACCESS_KEY_ID}"
-          echo "AWS_SECRET_ACCESS_KEY is set: ${#AWS_SECRET_ACCESS_KEY}"
-          echo "AWS_SESSION_TOKEN is set: ${#AWS_SESSION_TOKEN}"
-
 
       - name: Terraform Init
         run: terraform init -input=false
