@@ -1,4 +1,4 @@
-# Prometheus config only
+# Prometheus config file
 locals {
   prometheus_yml = <<-YML
   global:

@@ -1,3 +1,5 @@
+//transit gateway file
+
 resource "aws_ec2_transit_gateway" "tgw" {
   tags = { Name = "hub-tgw" }
 }

@@ -1,3 +1,5 @@
+//automated creation of PostgreSQL
+
 resource "aws_db_subnet_group" "data" {
   name       = "data-rds-subnets"
   subnet_ids = [aws_subnet.data_private["0"].id, aws_subnet.data_private["1"].id]

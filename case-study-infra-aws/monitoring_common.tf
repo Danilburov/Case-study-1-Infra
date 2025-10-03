@@ -1,3 +1,5 @@
+//file gives EC2 instance permission through IAM roles and instance profiles specifically for the monitoring system
+
 # IAM Role for SSM
 resource "aws_iam_role" "ssm_role" {
   name = "monitoring-ssm-role"

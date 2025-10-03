@@ -1,9 +1,10 @@
+//Variables used accross the platform, a defined file so that I do not have to define each variable
+
 variable "region" {
   description = "The AWS region to deploy resources in"
   type        = string
   default     = "eu-central-1"
 }
-#AZs keeps it simple and redundant enough
 variable "azs" {
   type    = list(string)
   default = ["eu-central-1a", "eu-central-1b"]

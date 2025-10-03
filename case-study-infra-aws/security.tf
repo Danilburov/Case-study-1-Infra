@@ -1,3 +1,5 @@
+//firewall rules that control network access to the resources
+
 # ALB external access (HTTP)
 resource "aws_security_group" "alb_sg" {
   name   = "alb-sg"
